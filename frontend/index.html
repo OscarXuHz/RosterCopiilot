@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>護流 · 排班推薦 | 水墨風</title>
+    <!-- 引入 Google Font 书法字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fef9e6;  /* 浅黄宣纸色 */
+            font-family: 'Noto Serif SC', 'Times New Roman', serif;
+            color: #4a3b2a;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* 水墨晕染背景效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 10% 20%, rgba(200, 170, 120, 0.05) 2%, transparent 2.5%),
+                              radial-gradient(circle at 80% 70%, rgba(160, 120, 70, 0.04) 1.5%, transparent 2%);
+            background-size: 50px 50px, 80px 80px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* 页眉朱红印章效果 */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #c03c2b;
+            display: inline-block;
+            width: auto;
+            padding-bottom: 0.5rem;
+            letter-spacing: 4px;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #c03c2b;
+            text-shadow: 2px 2px 0 rgba(192, 60, 43, 0.1);
+        }
+        .header p {
+            font-size: 0.9rem;
+            color: #9b7b5c;
+            margin-top: 0.25rem;
+        }
+
+        /* 两栏布局 */
+        .two-columns {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .left-panel, .right-panel {
+            background: rgba(255, 251, 240, 0.85);
+            border-radius: 32px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
+            padding: 1.8rem;
+            backdrop-filter: blur(2px);
+            border: 1px solid #e9dbc9;
+        }
+        .left-panel {
+            flex: 1.2;
+            min-width: 320px;
+        }
+        .right-panel {
+            flex: 1.8;
+            min-width: 420px;
+        }
+
+        /* 朱红装饰线 */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-left: 5px solid #c03c2b;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            color: #5a3e2a;
+        }
+        .subsection-title {
+            font-size: 1.2rem;
+            margin: 1rem 0 0.8rem 0;
+            font-weight: 500;
+            color: #c03c2b;
+            border-bottom: 1px dashed #e0cfbc;
+            display: inline-block;
+        }
+
+        /* 表格样式（水墨） */
+        .fixed-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .fixed-table th, .fixed-table td {
+            border-bottom: 1px solid #e2d5c2;
+            padding: 8px 6px;
+            text-align: left;
+        }
+        .fixed-table th {
+            font-weight: 600;
+            color: #c03c2b;
+            background: #fff7ea;
+        }
+        .badge {
+            background: #f0e2d0;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #8b5a2b;
+        }
+
+        /* 表单 */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #9b6e42;
+            margin-bottom: 4px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #fffef8;
+            border: 1px solid #e2cfb5;
+            border-radius: 24px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #c03c2b;
+            box-shadow: 0 0 0 2px rgba(192,60,43,0.2);
+        }
+        button {
+            background: #c03c2b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background: #9e2f20;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(192,60,43,0.2);
+        }
+        .recommend-box {
+            background: #fff7e8;
+            border-left: 4px solid #c03c2b;
+            padding: 1rem;
+            margin-top: 1.2rem;
+            border-radius: 16px;
+        }
+        .recommend-title {
+            font-weight: bold;
+            color: #c03c2b;
+            margin-bottom: 8px;
+        }
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #e2cfb5, transparent);
+        }
+        .small-note {
+            font-size: 0.7rem;
+            color: #ad8b67;
+            margin-top: 4px;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 1rem;
+            color: #c03c2b;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>護流 · 排班推薦</h1>
+        <p>CareFlow · 水墨靈韻 | 朱批點睛</p>
+    </div>
+
+    <div class="two-columns">
+        <!-- 左侧：固定分工表 + 硬性要求 -->
+        <div class="left-panel">
+            <div class="section-title">📜 固定分工表</div>
+            <div id="fixedContent">
+                <div class="loading"><i class="fas fa-spinner"></i> 讀取中⋯</div>
+            </div>
+            <div class="subsection-title">⚙️ 硬性要求</div>
+            <div id="hardConstraints" style="font-size:0.85rem; background:#fdf6e8; padding:12px; border-radius:20px;">
+                <!-- 动态加载性别要求、专属护工等 -->
+            </div>
+        </div>
+
+        <!-- 右侧：新增任务 + 推荐结果 -->
+        <div class="right-panel">
+            <div class="section-title">✍️ 新增任務</div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>📅 日期</label>
+                    <input type="date" id="taskDate" required>
+                </div>
+                <div class="form-group">
+                    <label>⏰ 時段</label>
+                    <select id="taskPeriod">
+                        <option value="AM">上午 (AM)</option>
+                        <option value="PM">下午 (PM)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>🧓 長者姓名 / ID</label>
+                    <input type="text" id="elderName" placeholder="例如: Y珍 或 長者編號" required>
+                </div>
+                <div class="form-group">
+                    <label>🛠️ 服務類型</label>
+                    <select id="serviceType">
+                        <option value="ESCORT">陪診護送 (ESCORT)</option>
+                        <option value="HOME_CARE">家居清潔 (HOME_CARE)</option>
+                        <option value="PERSONAL_CARE">個人護理 (PC)</option>
+                        <option value="BATH">沐浴 (BATH)</option>
+                        <option value="EXERCISE">復康運動 (E+RO)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📍 目的地 / 備註</label>
+                    <input type="text" id="destination" placeholder="例如: 律敦治醫院 或 特別要求">
+                </div>
+                <div class="form-group">
+                    <label>👩‍⚕️ 指定照顧員 (如有)</label>
+                    <input type="text" id="preferredWorker" placeholder="例如: 娥">
+                </div>
+                <div class="form-group">
+                    <label>📝 額外節數 / 時間要求</label>
+                    <input type="text" id="extraInfo" placeholder="如: 需要空腹, 輪椅">
+                </div>
+                <button type="submit" id="submitBtn">🔍 生成建議 · 朱批推舉</button>
+            </form>
+
+            <div id="recommendationArea" style="margin-top: 2rem;">
+                <div class="subsection-title">🎋 建議可用人員 + 時間</div>
+                <div id="recommendResult" class="recommend-box">
+                    等待提交任務，將顯示推薦的照顧員及調整時段。
+                </div>
+                <div id="changeDetail" class="small-note" style="margin-top: 0.5rem;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+    // 后端地址
+    const API_BASE = "http://localhost:8000";
+
+    // 全局存储固定数据
+    let fixedEmployees = [];
+    let fixedServices = [];
+    let hardConstraintsList = [];
+
+    // ----- 加载固定分工表 (mock-data) -----
+    async function loadFixedData() {
+        try {
+            const res = await fetch(`${API_BASE}/api/schedule/mock-data`);
+            if (!res.ok) throw new Error("无法获取固定数据");
+            const data = await res.json();
+            fixedEmployees = data.employees || [];
+            fixedServices = data.fixed_services || [];
+            renderFixedTable();
+            renderHardConstraints(data);
+        } catch (err) {
+            document.getElementById("fixedContent").innerHTML = `<div class="loading">⚠️ 未能載入固定分工表，請確認後端已啟動。</div>`;
+            console.error(err);
+        }
+    }
+
+    // 渲染固定分工表格
+    function renderFixedTable() {
+        if (!fixedServices.length) {
+            document.getElementById("fixedContent").innerHTML = `<div class="small-note">暫無固定服務數據</div>`;
+            return;
+        }
+        // 按星期分组展示
+        const weekdays = {1:"一",2:"二",3:"三",4:"四",5:"五"};
+        let html = `<table class="fixed-table"><thead><tr><th>星期</th><th>時段</th><th>服務類型</th><th>照顧員</th><th>長者</th></tr></thead><tbody>`;
+        fixedServices.forEach(svc => {
+            const weekdayStr = weekdays[svc.weekday] || svc.weekday;
+            const worker = fixedEmployees.find(e => e.id === svc.assigned_worker_id)?.display_name || svc.assigned_worker_id || "未指派";
+            const elder = svc.elder_id || "—";
+            html += `<tr>
+                        <td>週${weekdayStr}</td>
+                        <td>${svc.period === "AM" ? "上午" : "下午"}</td>
+                        <td>${svc.service_code}</td>
+                        <td>${worker}</td>
+                        <td>${elder}</td>
+                     </tr>`;
+        });
+        html += `</tbody></table><div class="small-note" style="margin-top:8px;">※ 僅顯示部分固定服務，完整請參閱後端。</div>`;
+        document.getElementById("fixedContent").innerHTML = html;
+    }
+
+    // 渲染硬性要求 (性别、专属护工等)
+    function renderHardConstraints(data) {
+        let html = "";
+        // 长者独占要求
+        const elders = data.elders || [];
+        const exclusive = elders.filter(e => e.exclusive_worker_id).map(e => `${e.display_name} → 只能由 ${e.exclusive_worker_id}`);
+        if (exclusive.length) html += `<div><i class="fas fa-user-lock"></i> 專屬護工：${exclusive.join("；")}</div>`;
+        // 性别要求
+        const genderReqs = elders.filter(e => e.gender_requirement !== "ANY").map(e => `${e.display_name} 要求 ${e.gender_requirement === "M" ? "男性" : "女性"}照顧員`);
+        if (genderReqs.length) html += `<div><i class="fas fa-venus-mars"></i> 性別要求：${genderReqs.join("；")}</div>`;
+        if (!exclusive.length && !genderReqs.length) html = `<div>無特殊硬性約束 (性別任意、無專屬護工)</div>`;
+        document.getElementById("hardConstraints").innerHTML = html;
+    }
+
+    // 提交新增任务 → 生成变更事件 → 调用模拟排班 → 提取推荐人员
+    document.getElementById("taskForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById("submitBtn");
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = "⏳ 朱批運算中...";
+
+        // 获取表单值
+        const taskDate = document.getElementById("taskDate").value;
+        const period = document.getElementById("taskPeriod").value;
+        const elderName = document.getElementById("elderName").value.trim();
+        const serviceType = document.getElementById("serviceType").value;
+        const destination = document.getElementById("destination").value;
+        const preferredWorker = document.getElementById("preferredWorker").value.trim();
+        const extraInfo = document.getElementById("extraInfo").value;
+
+        if (!taskDate || !elderName) {
+            alert("請填寫日期和長者姓名");
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+            return;
+        }
+
+        // 构造一个 ChangeEvent (extra_escort 或 service_cancelled 等，这里用 extra_escort 模拟新增任务)
+        // 注意：后端需要 elder_id，但我们只有名称，先做简单映射 (从mock数据中查找 elder_id)
+        let elderId = null;
+        try {
+            const dataRes = await fetch(`${API_BASE}/api/schedule/mock-data`);
+            const data = await dataRes.json();
+            const matched = (data.elders || []).find(e => e.display_name === elderName);
+            elderId = matched ? matched.id : `temp_${elderName}`;
+        } catch(e) { elderId = `unknown_${elderName}`; }
+
+        const newEvent = {
+            type: "extra_escort",
+            change_date: taskDate,
+            period: period,
+            worker_id: preferredWorker || null,
+            elder_id: elderId,
+            service_id: null,
+            new_escort_count: 1,
+            reason: `新增任務: ${serviceType}, 目的地: ${destination}, 備註: ${extraInfo}`
+        };
+
+        // 调用 generate API
+        try {
+            const generateRes = await fetch(`${API_BASE}/api/schedule/generate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ changes: [newEvent] })
+            });
+            if (!generateRes.ok) throw new Error("排班生成失敗");
+            const result = await generateRes.json();
+
+            // 解析 result 中的 entries，找出与此次任务相关的建议
+            // 我们重点关注 audit_items 和 unassigned，以及新增的 escort 任务
+            const auditItems = result.audit_items || [];
+            const entries = result.entries || [];
+            // 寻找匹配日期的 escort 或相关服务，以及审计中的建议
+            let recommendations = [];
+            let suggestedWorker = null;
+
+            // 从审计项中获取 replacement_suggestion
+            for (let item of auditItems) {
+                if (item.kind === "replacement_suggestion" && item.suggested_entry) {
+                    const sug = item.suggested_entry;
+                    if (sug.schedule_date === taskDate && sug.period === period) {
+                        suggestedWorker = sug.worker_name;
+                        recommendations.push(`✅ 建議照顧員：${sug.worker_name}（時段 ${sug.period}，服務 ${sug.service_code}）`);
+                    }
+                }
+                if (item.kind === "unassigned_task" && item.original_entry && item.original_entry.schedule_date === taskDate) {
+                    recommendations.push(`⚠️ 此任務暫未分配，請人工審核: ${item.reason}`);
+                }
+            }
+            // 如果没有 audit 建议，从 entries 中查找该时段是否有相关任务并显示分配者
+            if (recommendations.length === 0) {
+                const matchedEntry = entries.find(e => e.schedule_date === taskDate && e.period === period && (e.elder_name === elderName || e.service_code === serviceType));
+                if (matchedEntry && matchedEntry.worker_name) {
+                    recommendations.push(`📌 系統已初步分配：${matchedEntry.worker_name} (任務狀態: ${matchedEntry.status})`);
+                } else {
+                    recommendations.push(`⚡ 未檢出直接匹配結果，可能需人工調整。可查看審核佇列。`);
+                }
+            }
+
+            // 显示改动部分（影响分析）
+            const impacts = result.impacts || [];
+            let impactHtml = "";
+            if (impacts.length) {
+                impactHtml = `<div class="recommend-title">📌 影響變動</div><ul style="margin-left:1rem;">`;
+                impacts.forEach(imp => { impactHtml += `<li>${imp.title} — ${imp.description}</li>`; });
+                impactHtml += `</ul>`;
+            } else {
+                impactHtml = `<div class="small-note">無其他任務受影響</div>`;
+            }
+
+            const recommendHtml = recommendations.length ? recommendations.map(r => `<div>${r}</div>`).join('') : "暫無具體人員推薦，請參考審核佇列手動指派。";
+            document.getElementById("recommendResult").innerHTML = `
+                <div class="recommend-title">🎋 推薦結果</div>
+                ${recommendHtml}
+                ${impactHtml}
+            `;
+            document.getElementById("changeDetail").innerHTML = `📝 提交的變更：${newEvent.reason}<br>🕒 日期時段：${taskDate} ${period === "AM" ? "上午" : "下午"}`;
+
+            // 如果存在未分配任务或审核项，也额外显示提示
+            if (result.unassigned && result.unassigned.length) {
+                document.getElementById("recommendResult").innerHTML += `<div class="small-note" style="margin-top:8px;color:#c03c2b;">❗尚有 ${result.unassigned.length} 個任務未分配，請至審核佇列處理。</div>`;
+            }
+        } catch (err) {
+            document.getElementById("recommendResult").innerHTML = `<div style="color:#b33;">❌ 呼叫後端失敗: ${err.message}<br>請確認後端服務運行中。</div>`;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
+    });
+
+    // 页面加载时获取固定数据
+    loadFixedData();
+</script>
+</body>
+</html>
